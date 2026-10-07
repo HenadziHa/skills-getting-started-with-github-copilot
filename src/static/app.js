@@ -7,11 +7,12 @@ document.addEventListener("DOMContentLoaded", () => {
   // Function to fetch activities from API
   async function fetchActivities() {
     try {
-      const response = await fetch("/activities");
+      const response = await fetch("/activities", { cache: "no-store" });
       const activities = await response.json();
 
       // Clear loading message
       activitiesList.innerHTML = "";
+      activitySelect.innerHTML = '<option value="">-- Select an activity --</option>';
 
       // Populate activities list
       Object.entries(activities).forEach(([name, details]) => {
@@ -25,7 +26,40 @@ document.addEventListener("DOMContentLoaded", () => {
           <p>${details.description}</p>
           <p><strong>Schedule:</strong> ${details.schedule}</p>
           <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
+          <div class="participants">
+            <h5>Participants <span>${details.participants.length}</span></h5>
+          </div>
         `;
+
+        const participantsSection = activityCard.querySelector(".participants");
+        if (details.participants.length) {
+          const participantList = document.createElement("ul");
+          details.participants.forEach((participant) => {
+            const listItem = document.createElement("li");
+            listItem.className = "participant-item";
+
+            const email = document.createElement("span");
+            email.textContent = participant;
+
+            const removeButton = document.createElement("button");
+            removeButton.type = "button";
+            removeButton.className = "participant-remove";
+            removeButton.dataset.activity = name;
+            removeButton.dataset.email = participant;
+            removeButton.setAttribute("aria-label", `Remove ${participant} from ${name}`);
+            removeButton.title = "Remove participant";
+            removeButton.innerHTML = '<span class="delete-icon" aria-hidden="true"></span>';
+
+            listItem.append(email, removeButton);
+            participantList.appendChild(listItem);
+          });
+          participantsSection.appendChild(participantList);
+        } else {
+          const emptyMessage = document.createElement("p");
+          emptyMessage.className = "participants-empty";
+          emptyMessage.textContent = "No sign-ups yet";
+          participantsSection.appendChild(emptyMessage);
+        }
 
         activitiesList.appendChild(activityCard);
 
@@ -62,6 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
         messageDiv.textContent = result.message;
         messageDiv.className = "success";
         signupForm.reset();
+        await fetchActivities();
       } else {
         messageDiv.textContent = result.detail || "An error occurred";
         messageDiv.className = "error";
@@ -79,6 +114,41 @@ document.addEventListener("DOMContentLoaded", () => {
       messageDiv.classList.remove("hidden");
       console.error("Error signing up:", error);
     }
+  });
+
+  activitiesList.addEventListener("click", async (event) => {
+    const removeButton = event.target.closest(".participant-remove");
+    if (!removeButton) return;
+
+    removeButton.disabled = true;
+    const { activity, email } = removeButton.dataset;
+
+    try {
+      const response = await fetch(
+        `/activities/${encodeURIComponent(activity)}/signup?email=${encodeURIComponent(email)}`,
+        { method: "DELETE" }
+      );
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.detail || "Unable to remove participant");
+      }
+
+      await fetchActivities();
+      messageDiv.textContent = result.message;
+      messageDiv.className = "success";
+      messageDiv.classList.remove("hidden");
+    } catch (error) {
+      messageDiv.textContent = error.message || "Failed to remove participant. Please try again.";
+      messageDiv.className = "error";
+      messageDiv.classList.remove("hidden");
+      removeButton.disabled = false;
+      console.error("Error removing participant:", error);
+    }
+
+    setTimeout(() => {
+      messageDiv.classList.add("hidden");
+    }, 5000);
   });
 
   // Initialize app
