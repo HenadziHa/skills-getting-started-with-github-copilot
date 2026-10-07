@@ -74,6 +74,124 @@ section h3 {
   margin-bottom: 8px;
 }
 
+.participants {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #dce5e2;
+}
+
+.participants h5 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  color: #315b50;
+  font-size: 14px;
+}
+
+.participants h5 span {
+  display: inline-grid;
+  min-width: 22px;
+  height: 22px;
+  place-items: center;
+  padding: 0 6px;
+  border-radius: 11px;
+  background-color: #e3f1eb;
+  color: #315b50;
+  font-size: 12px;
+}
+
+.participants ul {
+  padding-left: 0;
+  list-style: none;
+  color: #52645e;
+  font-size: 14px;
+}
+
+.participant-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 32px;
+  padding: 2px 0;
+  overflow-wrap: anywhere;
+}
+
+.participant-item > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.participant-remove {
+  display: grid;
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  background: transparent;
+  color: #687a74;
+  cursor: pointer;
+}
+
+.participant-remove:hover {
+  border-color: #f0c9c5;
+  background-color: #fff0ee;
+  color: #ad352d;
+}
+
+.participant-remove:focus-visible {
+  outline: 2px solid #315b50;
+  outline-offset: 2px;
+}
+
+.participant-remove:disabled {
+  cursor: wait;
+  opacity: 0.5;
+}
+
+.delete-icon {
+  position: relative;
+  width: 10px;
+  height: 11px;
+  margin-top: 3px;
+  border: 1.5px solid currentColor;
+  border-top: 0;
+  border-radius: 0 0 2px 2px;
+}
+
+.delete-icon::before {
+  position: absolute;
+  top: -4px;
+  left: -3px;
+  width: 13px;
+  height: 2px;
+  border-top: 1.5px solid currentColor;
+  content: "";
+}
+
+.delete-icon::after {
+  position: absolute;
+  top: -6px;
+  left: 2px;
+  width: 4px;
+  height: 2px;
+  border: 1.5px solid currentColor;
+  border-bottom: 0;
+  border-radius: 2px 2px 0 0;
+  content: "";
+}
+
+.participants .participants-empty {
+  margin: 0;
+  color: #74827d;
+  font-size: 14px;
+  font-style: italic;
+}
+
 .form-group {
   margin-bottom: 15px;
 }
